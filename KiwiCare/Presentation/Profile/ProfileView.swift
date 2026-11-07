@@ -22,6 +22,8 @@ struct ProfileView: View {
     }
 }
 
+#if DEBUG
+
 #Preview {
     NavigationStack {
         ProfileView(
@@ -30,3 +32,5 @@ struct ProfileView: View {
         )
     }
 }
+
+#endif
