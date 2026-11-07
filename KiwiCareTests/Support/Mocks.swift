@@ -97,7 +97,7 @@ final class InMemoryTokenStore: TokenStore {
 }
 
 extension AuthSession {
-    static let stub = AuthSession.preview
+    @MainActor static let stub = AuthSession.preview
 }
 
 /// Builds a JWT whose payload `JWTClaims` can decode. Header and signature are dummies.

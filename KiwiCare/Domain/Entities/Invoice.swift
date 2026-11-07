@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Invoice: Identifiable, Equatable {
+nonisolated struct Invoice: Identifiable, Equatable {
     let id: UUID
     let userID: String
     let amount: Int
@@ -17,14 +17,14 @@ struct Invoice: Identifiable, Equatable {
     var syncStatus: SyncStatus
 }
 
-enum PaymentMethod: String, CaseIterable {
+nonisolated enum PaymentMethod: String, CaseIterable {
     case cash
     case creditCard = "credit_card"
     case bankTransfer = "bank_transfer"
     case other
 }
 
-enum SyncStatus: Equatable {
+nonisolated enum SyncStatus: Equatable {
     case pending                    // 等待上传
     case syncing                    // 上传中
     case synced                     // 已上传

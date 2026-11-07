@@ -66,7 +66,7 @@ extension InvoiceRecord {
     }
 }
 
-extension SyncStatus {
+nonisolated extension SyncStatus {
     var stateCode: String {
         switch self {
         case .pending: "pending"
