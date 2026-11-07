@@ -34,9 +34,9 @@ struct LoginView: View {
                 }
             }
             .padding()
+            .padding(.top, 20)
             .animation(.default, value: viewModel.errorMessage)
         }
-        .defaultScrollAnchor(.center, for: .alignment)
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
     }
@@ -72,15 +72,11 @@ struct LoginView: View {
 #if DEBUG
 private struct PreviewSignInUseCase: SignInUseCase {
     var error: AuthError?
-
+    
     func execute(email: String, password: String) async throws -> AuthSession {
         try await Task.sleep(for: .seconds(1))
         if let error { throw error }
-        return AuthSession(
-            user: User(id: "1", name: "Preview", email: email,
-                       phone: nil, avatarURL: nil, city: nil),
-            role: .customer
-        )
+        return AuthSession.preview
     }
 }
 

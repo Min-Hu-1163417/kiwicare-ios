@@ -1,0 +1,32 @@
+//
+//  Invoice.swift
+//  KiwiCare
+//
+//  Created by Vincent Hu on 07/11/2026.
+//
+
+import Foundation
+
+struct Invoice: Identifiable, Equatable {
+    let id: UUID
+    let userID: String
+    let amount: Int
+    let paymentMethod: PaymentMethod
+    let description: String?
+    let createdAt: Date
+    var syncStatus: SyncStatus
+}
+
+enum PaymentMethod: String, CaseIterable {
+    case cash
+    case creditCard = "credit_card"
+    case bankTransfer = "bank_transfer"
+    case other
+}
+
+enum SyncStatus: Equatable {
+    case pending                    // 等待上传
+    case syncing                    // 上传中
+    case synced                     // 已上传
+    case failed(String)             // 上传失败，数据有问题，需要用户处理
+}

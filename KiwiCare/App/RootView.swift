@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RootView: View {
     let container: AppContainer
-
+    
     var body: some View {
         switch container.session.state {
         case .loading:
@@ -19,9 +19,12 @@ struct RootView: View {
                 LoginView(viewModel: container.makeLoginViewModel())
             }
         case .signedIn(let authSession):
-            NavigationStack {
-                HomeView(session: authSession, onSignOut: container.session.signOut)
-            }
+            MainTabView(
+                session: authSession,
+                onSignOut: container.session.signOut,
+                makeInvoiceList: { container.makeInvoiceListViewModel(userID: authSession.user.id) },
+                makeCreateInvoice: container.makeCreateInvoiceViewModel
+            )
         case .failed(let message):
             ContentUnavailableView {
                 Label("Connection failed", systemImage: "wifi.exclamationmark")

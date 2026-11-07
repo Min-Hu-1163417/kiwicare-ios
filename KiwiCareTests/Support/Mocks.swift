@@ -7,6 +7,7 @@
 
 import Foundation
 @testable import KiwiCare
+import Testing
 
 // MARK: - Repositories
 
@@ -96,10 +97,7 @@ final class InMemoryTokenStore: TokenStore {
 }
 
 extension AuthSession {
-    static let stub = AuthSession(
-        user: User(id: "1", name: "Test", email: "a@b.com", phone: nil, avatarURL: nil, city: nil),
-        role: .customer
-    )
+    static let stub = AuthSession.preview
 }
 
 /// Builds a JWT whose payload `JWTClaims` can decode. Header and signature are dummies.
