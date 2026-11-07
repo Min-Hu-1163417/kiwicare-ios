@@ -9,3 +9,9 @@ build/
 
 # Swift Package Manager
 .build/
+
+# Fastlane
+fastlane/test_output/
+fastlane/report.xml
+fastlane/README.md
+build/
