@@ -13,6 +13,7 @@ nonisolated struct Invoice: Identifiable, Equatable {
     let amount: Int
     let paymentMethod: PaymentMethod
     let description: String?
+    var attachments: [URL] = []     // 附件图片的 URL（已上传到服务器）
     let createdAt: Date
     var syncStatus: SyncStatus
 }

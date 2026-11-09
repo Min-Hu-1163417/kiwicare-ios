@@ -19,6 +19,7 @@ final class InvoiceRecord {
     var syncState: String           // "pending" / "syncing" / "synced" / "failed"
     var failureReason: String?
     var attemptCount = 0
+    var attachments: [String] = []  // 附件图片的 URL
     
     init(id: UUID, userID: String, amount: Int, paymentMethod: String,
          note: String?, createdAt: Date, syncState: String, failureReason: String?) {
@@ -45,6 +46,7 @@ extension InvoiceRecord {
             syncState: invoice.syncStatus.stateCode,
             failureReason: invoice.syncStatus.failureReason
         )
+        attachments = invoice.attachments.map(\.absoluteString)
     }
     
     func toDomain() -> Invoice? {
@@ -55,6 +57,7 @@ extension InvoiceRecord {
             amount: amount,
             paymentMethod: method,
             description: note,
+            attachments: attachments.compactMap(URL.init(string:)),
             createdAt: createdAt,
             syncStatus: SyncStatus(stateCode: syncState, failureReason: failureReason)
         )

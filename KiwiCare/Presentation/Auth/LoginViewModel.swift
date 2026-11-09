@@ -6,6 +6,7 @@
 //
 
 import Observation
+import Foundation
 
 @Observable
 final class LoginViewModel {
@@ -50,15 +51,15 @@ final class LoginViewModel {
     private static func message(for error: AuthError) -> String {
         switch error {
         case .invalidEmail:
-            "Please enter a valid email address."
+            String(localized: "Please enter a valid email address.")
         case .invalidPassword:
-            "Password must be at least 8 characters with uppercase, lowercase, a number and a symbol."
+            String(localized: "Password must be at least 8 characters with uppercase, lowercase, a number and a symbol.")
         case .invalidCredentials:
-            "Incorrect email or password."
+            String(localized: "Incorrect email or password.")
         case .network:
-            "Unable to connect. Please check your network."
+            String(localized: "Unable to connect. Please check your network.")
         case .sessionExpired, .unknown:
-            "Something went wrong. Please try again."
+            String(localized: "Something went wrong. Please try again.")
         }
     }
 }

@@ -10,12 +10,10 @@ import SwiftUI
 struct InvoiceListView: View {
     @State private var viewModel: InvoiceListViewModel
     @State private var isCreating = false
-    private let makeCreateInvoice: () -> CreateInvoiceViewModel
+    @Environment(\.screenFactory) private var screenFactory
     
-    init(viewModel: InvoiceListViewModel,
-         makeCreateInvoice: @escaping () -> CreateInvoiceViewModel) {
+    init(viewModel: InvoiceListViewModel) {
         _viewModel = State(wrappedValue: viewModel)
-        self.makeCreateInvoice = makeCreateInvoice
     }
     
     var body: some View {
@@ -31,7 +29,7 @@ struct InvoiceListView: View {
         }
         .sheet(isPresented: $isCreating) {
             NavigationStack {
-                CreateInvoiceView(viewModel: makeCreateInvoice())
+                CreateInvoiceView(viewModel: screenFactory.createInvoice())
             }
         }
         .overlay {
@@ -55,9 +53,15 @@ struct InvoiceListView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(invoice.description ?? "Invoice")
                         .font(.headline)
-                    Text(invoice.createdAt, format: .dateTime.day().month().hour().minute())
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 8) {
+                        Text(invoice.createdAt, format: .dateTime.day().month().hour().minute())
+                        if !invoice.attachments.isEmpty {
+                            Label("\(invoice.attachments.count)", systemImage: "paperclip")
+                                .labelStyle(.titleAndIcon)
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 4) {
@@ -102,21 +106,16 @@ struct InvoiceListView: View {
 
 #Preview("All statuses") {
     NavigationStack {
-        InvoiceListView(viewModel: InvoiceListViewModel(useCase: PreviewFetchInvoices(), userID: "1"),
-                        makeCreateInvoice: {
-            CreateInvoiceViewModel(createInvoice: PreviewCreateInvoice(), onCreated: { _ in })
-        })
+        InvoiceListView(viewModel: InvoiceListViewModel(useCase: PreviewFetchInvoices(), userID: "1"))
     }
+    .environment(\.screenFactory, .preview)
 }
 
 private func previewInvoiceListView() -> some View {
     NavigationStack {
-        InvoiceListView(viewModel: InvoiceListViewModel(useCase: PreviewFetchInvoices(invoices: []), userID: "1"),
-                        makeCreateInvoice: {
-            CreateInvoiceViewModel(createInvoice: PreviewCreateInvoice(), onCreated: { _ in })
-        }
-        )
+        InvoiceListView(viewModel: InvoiceListViewModel(useCase: PreviewFetchInvoices(invoices: []), userID: "1"))
     }
+    .environment(\.screenFactory, .preview)
 }
 
 #Preview("Empty - Light") {

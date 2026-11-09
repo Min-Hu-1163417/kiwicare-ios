@@ -16,6 +16,11 @@ final class AppContainer {
     private let signInUseCase: SignInUseCase
     private let invoiceUseCase: DefaultFetchInvoicesUseCase
     private let createInvoiceUseCase: DefaultCreateInvoiceUseCase
+    private let fetchNearbyProvider: FetchNearbyProvidersUseCase
+    private let fetchProviderDetail: FetchProviderDetailUseCase
+    private let uploadAttachments: UploadAttachmentsUseCase
+    private let fetchInvoiceStats : FetchInvoiceStatsUseCase
+    private let restoreSession: RestoreSessionUseCase
     
     private let invoiceRepository: InvoiceRepository
     
@@ -59,9 +64,20 @@ final class AppContainer {
             }
         )
         
+        let providerRepository = DefaultProviderRepository(client: client)
+        self.fetchNearbyProvider = DefaultFetchNearbyProvidersUseCase(repository: providerRepository, locationProvider: CoreLocationProvider())
+        self.fetchProviderDetail = DefaultFetchProviderDetailUseCase(repository: providerRepository)
+        
+        // Attachments
+        let attachmentRepository = DefaultAttachmentRepository(client: client)
+        self.uploadAttachments = DefaultUploadAttachmentsUseCase(repository: attachmentRepository)
+        
+        self.fetchInvoiceStats = DefaultFetchInvoiceStatsUseCase(repository: invoiceRepository)
+        
         self.session = session
         self.signInUseCase = signIn
         self.invoiceUseCase = invoiceUseCase
+        self.restoreSession = restoreSession
     }
 }
 
@@ -73,15 +89,42 @@ extension AppContainer {
     }
     
     func makeInvoiceListViewModel(userID: String) -> InvoiceListViewModel {
+        if let cached = invoiceList, cached.userID == userID {
+            return cached.viewModel
+        }
         let viewModel = InvoiceListViewModel(useCase: invoiceUseCase, userID: userID)
         invoiceSync.onSyncFinished = { [weak viewModel] in viewModel?.load() }
+        invoiceList = (userID, viewModel)
         return viewModel
     }
     
     func makeCreateInvoiceViewModel() -> CreateInvoiceViewModel {
-        CreateInvoiceViewModel(createInvoice: createInvoiceUseCase) { [weak self] _ in
+        CreateInvoiceViewModel(createInvoice: createInvoiceUseCase, uploadAttachments: uploadAttachments) { [weak self] _ in
             self?.invoiceList?.viewModel.load()      // 列表立刻显示新发票
             self?.invoiceSync.requestSync()          // 触发上传
         }
+    }
+    
+    func makeNearbyProvidersViewModel() -> NearbyProvidersViewModel {
+        NearbyProvidersViewModel(fetchNearbyProviders: fetchNearbyProvider)
+    }
+    
+    func makeProfileViewModel(userID: String) -> ProfileViewModel {
+        ProfileViewModel(restoreSession: self.restoreSession, fetchInvoiceStats: self.fetchInvoiceStats, userID: userID)
+    }
+    
+    func makeProviderDetail(_ item: NearbyProvider) -> ProviderDetailViewController {
+        ProviderDetailViewController(item: item, fetchDetail: fetchProviderDetail)
+    }
+    
+    /// 登录后的所有页面工厂，在 RootView 里通过 Environment 注入
+    func screenFactory(userID: String) -> ScreenFactory {
+        ScreenFactory(
+            invoiceList: { self.makeInvoiceListViewModel(userID: userID) },
+            createInvoice: { self.makeCreateInvoiceViewModel() },
+            nearbyProviders: { self.makeNearbyProvidersViewModel() },
+            profile: { self.makeProfileViewModel(userID: userID) },
+            providerDetail: { self.makeProviderDetail($0) }
+        )
     }
 }

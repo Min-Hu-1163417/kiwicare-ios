@@ -3,7 +3,7 @@
 //  KiwiCare
 //
 
-protocol RestoreSessionUseCase {
+protocol RestoreSessionUseCase: Sendable {
     /// Returns nil when there is no stored session.
     func execute() async throws -> AuthSession?
 }

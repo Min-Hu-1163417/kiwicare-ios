@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct PrimaryButton: View {
-    let title: String
-    var systemImage: String = "arrow.right"
+    let title: LocalizedStringKey
+    var systemImage = "arrow.right"
     var isLoading = false
     let action: () -> Void
     

@@ -8,22 +8,27 @@
 import SwiftUI
 
 struct MainTabView: View {
-    let session: AuthSession
     let onSignOut: () -> Void
-    let makeInvoiceList: () -> InvoiceListViewModel
-    let makeCreateInvoice: () -> CreateInvoiceViewModel
+    
+    @Environment(\.screenFactory) private var screenFactory
     
     var body: some View {
         TabView {
             Tab("Invoices", systemImage: "doc.text") {
                 NavigationStack {
-                    InvoiceListView(viewModel: makeInvoiceList(), makeCreateInvoice: makeCreateInvoice)
+                    InvoiceListView(viewModel: screenFactory.invoiceList())
+                }
+            }
+            
+            Tab("Nearby", systemImage: "mappin.and.ellipse") {
+                NavigationStack {
+                    NearbyProvidersView(viewModel: screenFactory.nearbyProviders())
                 }
             }
             
             Tab("Profile", systemImage: "person.crop.circle") {
                 NavigationStack {
-                    ProfileView(session: session, onSignOut: onSignOut)
+                    ProfileView(viewModel: screenFactory.profile(), onSignOut: onSignOut)
                 }
             }
         }
@@ -32,20 +37,9 @@ struct MainTabView: View {
 
 #if DEBUG
 
-private func makeMainTabPreview() -> some View {
-    MainTabView(
-        session: .preview,
-        onSignOut: {},
-        makeInvoiceList: {
-            InvoiceListViewModel(useCase: PreviewFetchInvoices(), userID: "1")
-        },
-        makeCreateInvoice: {
-            CreateInvoiceViewModel(createInvoice: PreviewCreateInvoice(), onCreated: { _ in })
-        }
-    )
+#Preview {
+    MainTabView(onSignOut: {})
+        .environment(\.screenFactory, .preview)
 }
-
-#Preview("Light") { makeMainTabPreview() }
-#Preview("Dark") { makeMainTabPreview().preferredColorScheme(.dark) }
 
 #endif

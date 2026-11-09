@@ -24,3 +24,22 @@ enum APIError: LocalizedError {
         }
     }
 }
+
+extension APIError {
+    /// 这个错误值不值得重试
+    var isRetryable: Bool {
+        switch self {
+        case .network(let error):
+            if let urlError = error as? URLError, urlError.code == .cancelled {
+                return false
+            }
+            return true
+
+        case .server(let status, _):
+            return (500..<600).contains(status)
+
+        case .unauthorized, .decoding, .invalidResponse:
+            return false
+        }
+    }
+}

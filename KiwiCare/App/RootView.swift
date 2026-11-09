@@ -19,12 +19,8 @@ struct RootView: View {
                 LoginView(viewModel: container.makeLoginViewModel())
             }
         case .signedIn(let authSession):
-            MainTabView(
-                session: authSession,
-                onSignOut: container.session.signOut,
-                makeInvoiceList: { container.makeInvoiceListViewModel(userID: authSession.user.id) },
-                makeCreateInvoice: container.makeCreateInvoiceViewModel
-            )
+            MainTabView(onSignOut: container.session.signOut)
+                .environment(\.screenFactory, container.screenFactory(userID: authSession.user.id))
         case .failed(let message):
             ContentUnavailableView {
                 Label("Connection failed", systemImage: "wifi.exclamationmark")

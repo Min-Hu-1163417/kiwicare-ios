@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CreateInvoiceUseCase {
-    func execute(amount: Int, paymentMethod: PaymentMethod, description: String?) throws -> Invoice
+    func execute(amount: Int, paymentMethod: PaymentMethod, description: String?, attachments: [URL]) throws -> Invoice
 }
 
 struct DefaultCreateInvoiceUseCase: CreateInvoiceUseCase {
@@ -16,7 +16,7 @@ struct DefaultCreateInvoiceUseCase: CreateInvoiceUseCase {
     let currentUserID: () -> String?
     
     
-    func execute(amount: Int, paymentMethod: PaymentMethod, description: String?) throws -> Invoice {
+    func execute(amount: Int, paymentMethod: PaymentMethod, description: String?, attachments: [URL]) throws -> Invoice {
         guard let userID = currentUserID() else {
             throw InvoiceError.notSignedIn
         }
@@ -27,7 +27,7 @@ struct DefaultCreateInvoiceUseCase: CreateInvoiceUseCase {
         
         let trimmed = description?.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        let invoice = Invoice(id: UUID(), userID: userID, amount: amount, paymentMethod: paymentMethod, description: trimmed, createdAt: .now, syncStatus: .pending)
+        let invoice = Invoice(id: UUID(), userID: userID, amount: amount, paymentMethod: paymentMethod, description: trimmed, attachments: attachments, createdAt: .now, syncStatus: .pending)
         
         try repo.save(invoice)
         

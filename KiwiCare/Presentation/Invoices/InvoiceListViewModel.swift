@@ -5,6 +5,7 @@
 //  Created by Vincent Hu on 07/11/2026.
 //
 
+import Foundation
 import Observation
 
 @Observable
@@ -25,7 +26,7 @@ final class InvoiceListViewModel {
             invoices = try useCase.execute(userID: userID)
             errorMessage = nil
         } catch {
-            errorMessage = "Couldn't load invoices."
+            errorMessage = String(localized: "Couldn't load invoices.")
         }
     }
 }

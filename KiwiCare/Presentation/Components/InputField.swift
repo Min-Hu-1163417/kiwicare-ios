@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InputField: View {
-    let title: String
+    let title: LocalizedStringKey
     let placeholder: String
     let icon: String
     var isSecure = false

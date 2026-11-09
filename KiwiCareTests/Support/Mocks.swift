@@ -82,6 +82,14 @@ final class MockHTTPClient: HTTPClient {
         }
         return try result.get() as! R
     }
+
+    func upload<R: Decodable>(
+        _ endpoint: Endpoint<R>,
+        file: MultipartFile,
+        onProgress: @escaping @Sendable (Double) -> Void
+    ) async throws -> R {
+        try await send(endpoint)
+    }
 }
 
 @MainActor

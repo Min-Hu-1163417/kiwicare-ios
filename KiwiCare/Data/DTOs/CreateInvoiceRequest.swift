@@ -17,6 +17,7 @@ struct CreateInvoiceRequest: Encodable {
     let amount: Int
     let paymentMethod: String
     let description: String?
+    let attachments: [String]
     let source: String
 
     init(_ invoice: Invoice) {
@@ -25,6 +26,7 @@ struct CreateInvoiceRequest: Encodable {
         amount = invoice.amount
         paymentMethod = invoice.paymentMethod.rawValue
         description = invoice.description
+        attachments = invoice.attachments.map(\.absoluteString)
         source = "manual"
     }
 }

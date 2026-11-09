@@ -3,6 +3,7 @@
 //  KiwiCare
 //
 
+import Foundation
 import Observation
 
 /// App-wide authentication state. Drives which root screen is shown.
@@ -35,9 +36,9 @@ final class SessionViewModel {
         } catch AuthError.sessionExpired {
             state = .signedOut
         } catch AuthError.network {
-            state = .failed("Unable to connect. Please check your network.")
+            state = .failed(String(localized: "Unable to connect. Please check your network."))
         } catch {
-            state = .failed("Something went wrong. Please try again.")
+            state = .failed(String(localized: "Something went wrong. Please try again."))
         }
     }
 
