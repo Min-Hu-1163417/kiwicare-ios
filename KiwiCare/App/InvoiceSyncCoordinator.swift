@@ -6,8 +6,6 @@
 //
 
 final class InvoiceSyncCoordinator {
-    var onSyncFinished: () -> Void = {}
-    
     private let syncInvoices: SyncInvoiceUseCase
     private let networkMonitor: NetworkMonitor
     
@@ -26,7 +24,6 @@ final class InvoiceSyncCoordinator {
     func requestSync() {
         Task {
             await syncInvoices.execute()
-            onSyncFinished()
         }
     }
 }

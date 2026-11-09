@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import OSLog
 
 final class ProviderDetailViewController: UIViewController {
     private var item: NearbyProvider
@@ -43,6 +44,7 @@ final class ProviderDetailViewController: UIViewController {
     
     deinit {
         loadTask?.cancel()
+        Logger.providers.debug("ProviderDetailViewController deinit")
     }
     
     required init?(coder: NSCoder) {

@@ -29,4 +29,11 @@ final class InvoiceListViewModel {
             errorMessage = String(localized: "Couldn't load invoices.")
         }
     }
+    
+    /// 一直监听发票的变化，有变化就重新加载，直到任务被取消（页面消失）
+    func observeChanges() async {
+        for await _ in useCase.changes() {
+            load()
+        }
+    }
 }

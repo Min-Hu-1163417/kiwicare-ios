@@ -40,6 +40,9 @@ struct InvoiceListView: View {
             }
         }
         .navigationTitle("Invoices")
+        .task {
+            await viewModel.observeChanges()
+        }
         .onAppear {
             viewModel.load()
         }

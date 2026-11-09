@@ -14,4 +14,8 @@ protocol InvoiceRepository {
 
     /// 把所有待上传的发票上传到服务器
     func syncPending() async
+
+    /// 本地的发票有变化时（新建、同步状态改变）发出一个事件。
+    /// 每次调用返回一个新的流，可以有多个观察者
+    func changes() -> AsyncStream<Void>
 }

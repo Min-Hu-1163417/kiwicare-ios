@@ -11,7 +11,6 @@ import SwiftData
 final class AppContainer {
     let session: SessionViewModel
     let invoiceSync: InvoiceSyncCoordinator
-    private var invoiceList: (userID: String, viewModel: InvoiceListViewModel)?
     
     private let signInUseCase: SignInUseCase
     private let invoiceUseCase: DefaultFetchInvoicesUseCase
@@ -89,19 +88,13 @@ extension AppContainer {
     }
     
     func makeInvoiceListViewModel(userID: String) -> InvoiceListViewModel {
-        if let cached = invoiceList, cached.userID == userID {
-            return cached.viewModel
-        }
-        let viewModel = InvoiceListViewModel(useCase: invoiceUseCase, userID: userID)
-        invoiceSync.onSyncFinished = { [weak viewModel] in viewModel?.load() }
-        invoiceList = (userID, viewModel)
-        return viewModel
+        InvoiceListViewModel(useCase: invoiceUseCase, userID: userID)
     }
     
     func makeCreateInvoiceViewModel() -> CreateInvoiceViewModel {
         CreateInvoiceViewModel(createInvoice: createInvoiceUseCase, uploadAttachments: uploadAttachments) { [weak self] _ in
-            self?.invoiceList?.viewModel.load()      // 列表立刻显示新发票
-            self?.invoiceSync.requestSync()          // 触发上传
+            // 列表会通过 Repository 的变化通知自动刷新，这里只需要触发上传
+            self?.invoiceSync.requestSync()
         }
     }
     

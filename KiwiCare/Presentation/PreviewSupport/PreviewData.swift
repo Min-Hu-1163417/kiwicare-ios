@@ -61,6 +61,11 @@ struct PreviewFetchInvoices: FetchInvoicesUseCase {
     func execute(userID: String) throws -> [Invoice] {
         invoices
     }
+
+    /// 预览里发票不会变化：一个永远不发出事件的流
+    func changes() -> AsyncStream<Void> {
+        AsyncStream { _ in }
+    }
 }
 
 struct PreviewCreateInvoice: CreateInvoiceUseCase {
